@@ -80,6 +80,8 @@ object Follower {
       type Addressee = Nothing
       type New = Follower
 
+		val _new: Option[Updatable[New]] = Some(Follower())
+
       def account: $[Account] = context.head
       def tweeter = performer.head
       
@@ -88,19 +90,19 @@ object Follower {
 
       /** This action is empowered if the performer does not appear in the
         * account's blocked list.
-	*/
+		  */
       override def empowered(implicit state: State) = 
-	!account.blocked.exists(_ == tweeter)
+		  !account.blocked.contains(tweeter)
 
       /** If the account is not protected, the permission is granted. In any
-        * other case, the Tweeter's approval is needed, so permission can
-	* not be determined by the system itself.
-	*/
+       * other case, the Tweeter's approval is needed, so permission can
+		 * not be determined by the system itself.
+		 */
       override def permitted(implicit state: State) = 
-	if (!account.isPrivate)
-	  Some(true)
-	else
-	  None
+		  if (!account.isPrivate)
+			 Some(true)
+		  else
+			 None
     }
 
     implicit val Follow = builder[Follow]

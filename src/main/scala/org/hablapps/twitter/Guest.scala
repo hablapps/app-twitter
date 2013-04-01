@@ -39,7 +39,7 @@ object Guest {
       /** This does not hold any substatus. */
       type Substatus = Nothing
 
-      /** This role could only appear on a Twitter. */
+      /** This role could only appear on a Twitter.  */
       type Context = Twitter
 
       /** This is a top-role, so no player is suitable. */

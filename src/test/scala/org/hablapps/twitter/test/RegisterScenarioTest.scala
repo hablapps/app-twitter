@@ -42,7 +42,6 @@ class RegisterScenarioTest extends FunSpec
       
       object System extends speech.PlainSystem
         with twitter.Program
-        with react.Debug
 
       import System._
 

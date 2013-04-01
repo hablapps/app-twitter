@@ -25,6 +25,7 @@ object Twitter {
 
   trait State { this: speech.System
     with Guest.State
+    with Statistics.State
     with account.Account.State =>
 
     /** Micro-blogging site to answer the question "What is happening?"
@@ -47,7 +48,7 @@ object Twitter {
       type MemberCol[x] = List[x]
 
       /** No resources appear here. */
-      type Environment = Nothing
+      type Environment = Statistics
       type EnvironmentCol[x] = Traversable[x]
 
       /** Guest SpeechActs will be collected here. */
@@ -73,7 +74,7 @@ object Twitter {
   trait Rules { this: speech.System with Twitter.State => 
     authorised {
       case Initiate(interaction) if interaction.isA[Twitter] => { 
-	implicit state => tops.isEmpty
+		  implicit state => tops.isEmpty
       }
     }
   }

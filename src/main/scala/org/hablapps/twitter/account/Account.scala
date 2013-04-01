@@ -52,9 +52,9 @@ object Account {
 
       /** Many kind of social actions can be said here.
         *
-	* Please, visit Guest, Tweeter and Follower for further info on this
-	* field.
-	*/
+		  * Please, visit Guest, Tweeter and Follower for further info on this
+		  * field.
+		  */
       type Action = SocialAction
       type ActionCol[x] = Traversable[x]
 
@@ -118,7 +118,7 @@ object Account {
 
       /** If there is not another account with the same name. */
       override def empowered(implicit state: State) = 
-	!twitter.accounts.exists(_.name == account.name)
+		  !twitter.accounts.exists(_.name == account.name)
     }
 
     implicit val SetUpAccount = builder[SetUpAccount]
@@ -134,11 +134,11 @@ object Account {
     declarer[Tweeter].of[Account](Account._blocked)
       .empowered {
         case (tweeter, account, blocked) => implicit state => 
-	  account.user == tweeter
+			 account.user == tweeter
       }
       .permitted {
         case (agent, entity, value) => implicit state => 
-	  Some(true)
+			 Some(true)
       }
 
     /** The 'name' and 'isPrivate' attributes are always granted. */
@@ -146,13 +146,13 @@ object Account {
       .empowered_atts(Account._name, Account._isPrivate)
       .empowered { 
         case (performer, EntityQuery(account)) => implicit state => 
-	  !account.isPrivate || account.followers.exists(_.tweeter == performer)
+			 !account.isPrivate || account.followers.exists(_.tweeter == performer)
       }
 
     /** An account must be finished when the Tweeter decides to leave it. */
     when {
       case Deleted(_, tweeter: Tweeter) => {
-        Finish(tweeter.context.get: $[Account])
+        Finish(tweeter.account)
       }
     }
   }

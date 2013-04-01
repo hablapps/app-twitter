@@ -2,9 +2,14 @@ name := "app-twitter"
 
 version := "1.0"
 
-organization in ThisBuild := "org.hablapps"
+organization := "org.hablapps"
 
-scalaVersion in ThisBuild := "2.10.0"
+scalaVersion := "2.10.0"
 
-scalacOptions in ThisBuild ++= Seq("-feature")
+scalacOptions ++= Seq("-feature")
 
+libraryDependencies ++= Seq(
+  "org.scala-lang" % "scala-reflect" % "2.10.0",
+  "org.scalatest" % "scalatest_2.10" % "1.9.1" % "test",
+  "junit" % "junit" % "4.10" % "test"
+)

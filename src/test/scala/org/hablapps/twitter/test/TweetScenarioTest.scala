@@ -118,7 +118,7 @@ class TweetScenarioTest extends FunSpec
       attempt(Say(
 	dulcinea, 
 	quijoteAccount, 
-	Follow(__new = Some(Follower()))))
+	Follow()))
 
       /* And @quijote sends her (a reduced version of) the letter he wrote, as
        * the body of a direct message. Remember: since @dulcinea follows him,
@@ -179,7 +179,7 @@ class TweetScenarioTest extends FunSpec
 	follow <- Say(
 	  dulcinea, 
 	  quijoteAccount, 
-	  Follow(__new = Some(Follower())))
+	  Follow())
 	_ <- Perform(follow)
 	dm <- Say(
       	  quijote,

@@ -25,6 +25,7 @@ object `package` {
       with Twitter.Rules
       with Guest.State  
       with Guest.Rules
+      with Statistics.State  
       with account.Account.State 
       with account.Account.Rules 
       with account.Tweeter.State 

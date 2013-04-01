@@ -44,7 +44,6 @@ object Tweeter {
 
       /** This is a top-role, so no player is suitable. */
       type Player = Nothing
-      type PlayerCol[x] = Traversable[x]
 
       /** This agent can play the Follower role in another account. */
       type Role = Follower
@@ -52,7 +51,7 @@ object Tweeter {
 
       /** This agent can achieve tweets, re-tweets, mentions, replies,
         * direct messages, follow requests and finally a leave, if he aims to
-	* unregister from the application.
+		  * unregister from the application.
         */
       type Perform = SocialAction
       type PerformCol[x] = Traversable[x]

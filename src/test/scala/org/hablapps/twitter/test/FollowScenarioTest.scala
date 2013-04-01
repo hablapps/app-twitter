@@ -42,7 +42,6 @@ class FollowScenarioTest extends FunSpec
       
       object System extends speech.PlainSystem
         with twitter.Program
-        with react.Debug
 
       import System._
 
@@ -90,7 +89,7 @@ class FollowScenarioTest extends FunSpec
        * she must wait for Buffy to approve (or deny) the action.
        */
       val NewEntities(willowFollow: $[Follow]@unchecked) = 
-	attempt(Say(willow, buffyAccount, Follow(__new = Some(Follower()))))
+	attempt(Say(willow, buffyAccount, Follow()))
 
       /* Undoubtely, Buffy approves her best friend Willow to become her
        * follower.
@@ -104,7 +103,7 @@ class FollowScenarioTest extends FunSpec
       attempt(Say(
 	spike, 
 	buffyAccount, 
-	Follow(__new = Some(Follower())))) should be(None)
+	Follow())) should be(None)
 
       /* One day, Spike got his soul again, and he decided to update his
        * biography.
@@ -136,7 +135,7 @@ class FollowScenarioTest extends FunSpec
        * still need to be approved in order to follow her.
        */
       val NewEntities(spikeFollow: $[Follow]@unchecked) =
-	attempt(Say(spike, buffyAccount, Follow(__new = Some(Follower()))))
+	attempt(Say(spike, buffyAccount, Follow()))
 
       /* With his new soul, Spike is going bananas. Therefore, he decides to
        * disappear for a while. He does not want to follow Buffy, so he
@@ -176,7 +175,7 @@ class FollowScenarioTest extends FunSpec
 	willowFollow <- Say(
 	  willow, 
 	  buffyAccount, 
-	  Follow(__new = Some(Follower())))
+	  Follow())
 	buffyApprovesWillow <- Say(
 	  buffy, 
 	  buffyAccount, 
@@ -207,7 +206,7 @@ class FollowScenarioTest extends FunSpec
 	spikeFollow <- Say(
 	  spike, 
 	  buffyAccount, 
-	  Follow(__new = Some(Follower())))
+	  Follow())
 	_ <- Retract(spikeFollow)
 	_ <- Abandon(willowFollower)
       } yield ())

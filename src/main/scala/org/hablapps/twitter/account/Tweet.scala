@@ -103,7 +103,7 @@ object Tweet {
 	* If we allowed this, the protected tweets would become public.
 	*/
       override def empowered(implicit state: State) = 
-	!originalTweet.get.account.isPrivate
+		  !originalTweet.get.account.isPrivate
     }
 
     implicit val Retweet = builder[Retweet]
@@ -138,7 +138,7 @@ object Tweet {
 
       /** If the user we are replying to has not blocked the performer. */
       override def empowered(implicit state: State) =
-	!originalTweet.get.context.head.blocked.exists(_ == tweeter)
+		  !originalTweet.get.context.head.blocked.exists(_ == tweeter)
     }
 
     implicit val Reply = builder[Reply]
@@ -184,18 +184,18 @@ object Tweet {
     /** A tweet has to be notified to all the performer's followers. */
     when {
       case e @ Performed(tweet:Tweet) => {
-	For(tweet.account.followers) {
+		  For(tweet.account.followers) {
           case f => Notify(f, e)
-	}
+		  }
       }
     }
-
+					
     /** A re-tweet has to be notified to all the performer's followers. */
     when {
       case e @ Performed(retweet: Retweet) => {
         For(retweet.account.followers) {
-	  case f => Notify(f, e)
-	}
+			 case f => Notify(f, e)
+		  }
       }
     }
   }
