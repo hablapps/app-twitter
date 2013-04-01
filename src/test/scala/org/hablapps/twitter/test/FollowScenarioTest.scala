@@ -45,7 +45,7 @@ class FollowScenarioTest extends FunSpec
 
       import System._
 
-      show_final_state = true
+		turn_on_log = true
 
       val Output(
 	  sunnydale, 
