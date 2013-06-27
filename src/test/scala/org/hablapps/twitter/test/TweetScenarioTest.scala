@@ -46,8 +46,6 @@ class TweetScenarioTest extends FunSpec
 
       import System._
 
-		turn_on_log = true
-
       val Output(
 	  castilla,
 	  dulcineaAccount,
@@ -102,10 +100,9 @@ class TweetScenarioTest extends FunSpec
        * fails, just because @dulcinea is not following him.
        */
       attempt(Say(
-      	quijote,
-      	dulcineaAccount,
-      	DM(_dictum = "Soberana y alta señora: El herido de punta..."))
-      ) should be(None)
+        quijote,
+        dulcineaAccount,
+        DM(_dictum = "Soberana y alta señora: El herido de punta..."))) should be(None)
 
       // So @quijote tries to talk her into following him.
       attempt(Say(
@@ -156,41 +153,42 @@ class TweetScenarioTest extends FunSpec
 	sanchoAccount <- Initiate2(
 	  (Account()
             .name += "sancho")
-	    .biography += "Fiel Escudero y Amigo",
-	  castilla)
-	sancho <- Play2(Tweeter(), sanchoAccount)
-	tweet <- Say(
-	  quijote,
-	  quijoteAccount,
-	  Tweet(_dictum = "Just thinking about her..."))
-	_ <- Perform(tweet)
-	reply <- Say(
-	  sancho,
-	  quijoteAccount,
-	  Reply(
-	    _dictum = "@quijote then you should write her a private message.",
-	    _originalTweet = Option(tweet)))
-	_ <- Perform(reply)
-	mention <- Say(
-	  quijote,
-	  quijoteAccount,
-	  Tweet(_dictum = "@dulcinea could you follow me to direct messaging?"))
-	_ <- Perform(mention)
-	follow <- Say(
-	  dulcinea, 
-	  quijoteAccount, 
-	  Follow())
-	_ <- Perform(follow)
-	dm <- Say(
-      	  quijote,
-      	  dulcineaAccount,
-      	  DM(_dictum = "Erm... Soberana y alta señora: El herido de punta..."))
-	_ <- Perform(dm)
-	rt <- Say(
-	  dulcinea,
-	  dulcineaAccount,
-	  Retweet(_originalTweet = Option(tweet)))
-	_ <- Perform(rt)
+            .biography += "Fiel Escudero y Amigo",
+          castilla)
+        sancho <- Play2(Tweeter(), sanchoAccount)
+        tweet <- Say(
+          quijote,
+          quijoteAccount,
+          Tweet(_dictum = "Just thinking about her..."))
+        _ <- Perform(tweet)
+        reply <- Say(
+          sancho,
+          quijoteAccount,
+          Reply(
+            _dictum = "@quijote then you should write her a private message.",
+            _originalTweet = Option(tweet)))
+        _ <- Perform(reply)
+        mention <- Say(
+          quijote,
+          quijoteAccount,
+          Tweet(_dictum = "@dulcinea could you follow me to direct messaging?"))
+        _ <- Perform(mention)
+        follow <- Say(
+          dulcinea,
+          quijoteAccount,
+          Follow())
+        Performed(act) <- Perform(follow)
+        _ <- Notify(quijote, act.execution.head)
+        dm <- {println(s"Perform(follow): $act"); Say(
+          quijote,
+          dulcineaAccount,
+          DM(_dictum = "Erm... Soberana y alta señora: El herido de punta..."))}
+        _ <- Perform(dm)
+        rt <- Say(
+          dulcinea,
+          dulcineaAccount,
+          Retweet(_originalTweet = Option(tweet)))
+        _ <- Perform(rt)
       } yield ())
 
       obtained should be(getState())

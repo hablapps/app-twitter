@@ -16,14 +16,15 @@
 
 package org.hablapps.twitter
 
-import org.hablapps.updatable._
-import org.hablapps.speech
+import org.hablapps.{updatable,speech,twitter}
+import updatable._
 
 import language.reflectiveCalls
 
 object Guest {
 
-  trait State { self: speech.System with Twitter.State =>
+  trait State { self: speech.System 
+    with twitter.State =>
 
     /** A non-registered user who visits Twitter.
       *

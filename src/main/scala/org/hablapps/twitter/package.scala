@@ -16,23 +16,35 @@
 
 package org.hablapps.twitter
 
-import org.hablapps.speech
+import org.hablapps.{ updatable, speech }
+import org.hablapps.serializer.{ serializeMe }
+import updatable._
 
 object `package` {
 
+  trait State extends speech.System
+    with Twitter.State
+    with Guest.State
+    with Statistics.State
+    with account.Account.State
+    with account.Tweeter.State
+    with account.Follower.State
+    with account.Tweet.State
+    with account.list.TwitterList.State
+    with account.list.Listed.State
+    with account.list.ListFollower.State
+  
   trait Program extends speech.System
-      with Twitter.State 
-      with Twitter.Rules
-      with Guest.State  
-      with Guest.Rules
-      with Statistics.State  
-      with account.Account.State 
-      with account.Account.Rules 
-      with account.Tweeter.State 
-      with account.Tweeter.Rules
-      with account.Follower.State 
-      with account.Tweet.State 
-      with account.Tweet.Rules {
+    with State
+    with Twitter.Rules
+    with Guest.Rules
+    with account.Account.Rules
+    with account.Tweeter.Rules
+    with account.Tweet.Rules
+    with speech.serializer.SerializableComponent{ system =>
+      serializeMe[system.type]
+    
+    
     println("Welcome to the Twitter platform!")
   }
 

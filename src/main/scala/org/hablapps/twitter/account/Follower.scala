@@ -24,8 +24,7 @@ import language.reflectiveCalls
 object Follower {
 
   trait State { self: speech.System 
-      with Account.State 
-      with Tweeter.State =>
+    with twitter.State =>
 
     /** Does show interest in the updates done by certain Tweeter.
       *
@@ -55,6 +54,7 @@ object Follower {
       type Perform = SocialAction
       type PerformCol[x] = Traversable[x]
 
+      def account = context.head
       def tweeter = player.head
     }
 	       
@@ -82,7 +82,7 @@ object Follower {
 
 		val _new: Option[Updatable[New]] = Some(Follower())
 
-      def account: $[Account] = context.head
+      def account = context.head
       def tweeter = performer.head
       
       def NewE = implicitly[Evidence[New]]
@@ -198,4 +198,16 @@ object Follower {
 	       
     implicit val ForbidFollowing = builder[ForbidFollowing]	       
   }
+
+  trait Actions { self: speech.System 
+    with twitter.State =>
+
+		case class NotifyFollowers(account: $[Account], event: Event) extends DefinedAction( 
+		  For(account.followers){
+          case follower => Notify(follower, event)
+		  }
+      )
+
+  }
+
 }

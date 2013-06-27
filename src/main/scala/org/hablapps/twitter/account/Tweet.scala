@@ -24,19 +24,15 @@ import language.reflectiveCalls
 
 object Tweet {
 
-  trait State { self: speech.System 
-      with twitter.Twitter.State
-      with twitter.Guest.State
-      with Account.State
-      with Follower.State
-      with Tweeter.State =>
+  trait State { self: speech.System with twitter.Twitter.State with twitter.Guest.State with Account.State with Follower.State with Tweeter.State =>
 
-    /** Any message with fewer than 140 characters posted to Twitter.
-      *
-      * This is perhaps the most important item in the application. This message
-      * aims to answer the question "What is happening?". It is quite natural to
-      * introduce this element in the system as a SpeechAct.
-      */
+    /**
+     * Any message with fewer than 140 characters posted to Twitter.
+     *
+     * This is perhaps the most important item in the application. This message
+     * aims to answer the question "What is happening?". It is quite natural to
+     * introduce this element in the system as a SpeechAct.
+     */
     trait Tweet extends SpeechAct {
       type This = Tweet
 
@@ -51,7 +47,7 @@ object Tweet {
 
       type Addressee = Tweeter
 
-      /** Do not want to miss a tweet when said. */ 
+      /** Do not want to miss a tweet when said. */
       override val persistent = true
 
       /** Context alias to find where the Tweet was posted. */
@@ -62,23 +58,24 @@ object Tweet {
 
       /** If the message is not null. */
       override def empowered(implicit state: State) =
-	message.length != 0
+        message.length != 0
 
       /** If the tweet length is valid (< 141). */
       override def permitted(implicit state: State) =
-	Some(message.length < 141)
+        Some(message.length < 141)
     }
 
     implicit val Tweet = builder[Tweet]
 
-    /** A Tweet that is re-sent by another Tweeter.
-      *
-      * If a Tweeter considers a Tweet as interesting, he is able to re-tweet
-      * it. This is the main cause of Twitter to be a viral channel.
-      */
+    /**
+     * A Tweet that is re-sent by another Tweeter.
+     *
+     * If a Tweeter considers a Tweet as interesting, he is able to re-tweet
+     * it. This is the main cause of Twitter to be a viral channel.
+     */
     trait Retweet extends SpeechAct {
       type This = Retweet
-      
+
       /** No substatus is suitable. */
       type Substatus = Nothing
 
@@ -89,31 +86,33 @@ object Tweet {
       type Performer = Tweeter
 
       type Addressee = Nothing
-      
+
       /** Context-head alias: the account where the retweet was performed. */
       def account = context.head
 
       override val persistent = true
-      
+
       /** ''Original'' tweet we are re-tweeting. */
       val originalTweet: Option[$[Tweet]]
 
-      /** If the account where the tweet was created is not protected.
-        *
-	* If we allowed this, the protected tweets would become public.
-	*/
-      override def empowered(implicit state: State) = 
-		  !originalTweet.get.account.isPrivate
+      /**
+       * If the account where the tweet was created is not protected.
+       *
+       * If we allowed this, the protected tweets would become public.
+       */
+      override def empowered(implicit state: State) =
+        !originalTweet.get.account.isPrivate
     }
 
     implicit val Retweet = builder[Retweet]
 
-    /** A tweet that begins with a mention to another user and is in reply to
-      * one of his tweets. 
-      *
-      * This kind of message is really important to keep track of the
-      * conversations.
-      */
+    /**
+     * A tweet that begins with a mention to another user and is in reply to
+     * one of his tweets.
+     *
+     * This kind of message is really important to keep track of the
+     * conversations.
+     */
     trait Reply extends SpeechAct {
       type This = Reply
 
@@ -138,14 +137,15 @@ object Tweet {
 
       /** If the user we are replying to has not blocked the performer. */
       override def empowered(implicit state: State) =
-		  !originalTweet.get.context.head.blocked.exists(_ == tweeter)
+        true //!originalTweet.get.context.head.blocked.exists(_ == tweeter)
     }
 
     implicit val Reply = builder[Reply]
 
-    /** A personal message sent directly to someone who follows you or sent
-      * directly to you from someone you follow.
-      */
+    /**
+     * A personal message sent directly to someone who follows you or sent
+     * directly to you from someone you follow.
+     */
     trait DM extends SpeechAct {
       type This = DM
 
@@ -170,32 +170,28 @@ object Tweet {
 
       /** If the receiver follows the sender. */
       override def empowered(implicit state: State) =
-	performer.get.account.followers.exists { _.tweeter == account.user }
+        performer.get.account.followers.exists { _.tweeter == account.user }
     }
 
     implicit val DM = builder[DM]
   }
 
-  trait Rules { this: speech.System 
-      with State 
-      with Account.State 
-      with Follower.State =>
+  trait Rules { this: speech.System with State with Account.State with Follower.State =>
 
     /** A tweet has to be notified to all the performer's followers. */
     when {
-      case e @ Performed(tweet:Tweet) => {
-		  For(tweet.account.followers) {
+      case e @ Performed(tweet: Tweet) =>
+        For(tweet.account.followers) {
           case f => Notify(f, e)
-		  }
-      }
+        }
     }
-					
+
     /** A re-tweet has to be notified to all the performer's followers. */
     when {
       case e @ Performed(retweet: Retweet) => {
         For(retweet.account.followers) {
-			 case f => Notify(f, e)
-		  }
+          case f => Notify(f, e)
+        }
       }
     }
   }

@@ -16,15 +16,15 @@
 
 package org.hablapps.twitter.account
 
-import org.hablapps.updatable._
-import org.hablapps.speech
-import org.hablapps.twitter
+import org.hablapps.{updatable,react,speech,twitter}
+import updatable._
 
 import language.reflectiveCalls
 
 object Tweeter {
 
-  trait State { self: speech.System with Account.State with Follower.State =>
+  trait State { self: speech.System 
+    with twitter.State =>
 
     /** Posts all kind of tweets.
       *
@@ -45,8 +45,8 @@ object Tweeter {
       /** This is a top-role, so no player is suitable. */
       type Player = Nothing
 
-      /** This agent can play the Follower role in another account. */
-      type Role = Follower
+      /** Tweeters can be Follower in lists and accounts, and be Listed. */
+      type Role = Agent@Union3[Follower,Listed,ListFollower]
       type RoleCol[x] = Traversable[x]
 
       /** This agent can achieve tweets, re-tweets, mentions, replies,
@@ -91,14 +91,14 @@ object Tweeter {
     implicit val LeaveTweeter = builder[LeaveTweeter]
   }
 
-  trait Rules { self: speech.Program with State with Account.State =>
+  trait Rules { self: speech.Program with State with Account.State with Follower.State =>
 
     /** @play/1 Tweeter agents are top-level roles, but they can't
      * directly be created by components. Instead, components must
      * enter as guests, and then set up an account.
      */
     authorised {
-      case Play2(agent, _) if agent.isA[Tweeter] => implicit state => 
+      case Play2(agent, _) if agent.isA[Tweeter] => 
         false
     }
 
@@ -107,7 +107,15 @@ object Tweeter {
       */
     when {
       case Performed(setUp: SetUpAccount) => 
-        Play2(Tweeter(), setUp._new_entity.get)
+        Play2(Tweeter(_name=Some("user")), setUp._new_entity.get)
     }
+    
+    /** @notify Tweeter agents are automatically notified when they are followed by a new tweeter
+      */
+    when {
+      case e @ New(_, follower: Follower) =>
+        Notify(follower.account.user, e)
+    }
+
   }
 }

@@ -16,17 +16,15 @@
 
 package org.hablapps.twitter
 
-import org.hablapps.updatable._
-import org.hablapps.speech
+import org.hablapps.{updatable,speech,twitter}
+import updatable._
 
 import language.reflectiveCalls
 
 object Twitter {
 
   trait State { this: speech.System
-    with Guest.State
-    with Statistics.State
-    with account.Account.State =>
+    with twitter.State =>
 
     /** Micro-blogging site to answer the question "What is happening?"
       *

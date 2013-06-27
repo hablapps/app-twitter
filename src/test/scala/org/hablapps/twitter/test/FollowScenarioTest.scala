@@ -45,8 +45,6 @@ class FollowScenarioTest extends FunSpec
 
       import System._
 
-		turn_on_log = true
-
       val Output(
 	  sunnydale, 
 	  willowAccount, 
@@ -88,8 +86,12 @@ class FollowScenarioTest extends FunSpec
       /* Willow requests to follow Buffy, but this account is protected, so
        * she must wait for Buffy to approve (or deny) the action.
        */
-      val NewEntities(willowFollow: $[Follow]@unchecked) = 
-	attempt(Say(willow, buffyAccount, Follow()))
+      val NewEntities(willowFollow: $[Follow] @unchecked) =
+        attempt(Say(willow, buffyAccount, Follow()))
+
+      /* TODO: I suppose that the Willow's desire to follow Buffy should be
+       * notified to Buffy herself. Using 'willowFollow' is a kind of cheating.
+       */
 
       /* Undoubtely, Buffy approves her best friend Willow to become her
        * follower.
@@ -167,23 +169,26 @@ class FollowScenarioTest extends FunSpec
 	buffyAccount <- Initiate2(
 	  (((Account()
             .name += "buffy")
-	    .biography += "The Vampire Slayer")
-	    .blocked += spike)
-	    .isPrivate := true, 
-	  sunnydale)
-	buffy <- Play2(Tweeter(), buffyAccount)
-	willowFollow <- Say(
-	  willow, 
-	  buffyAccount, 
-	  Follow())
-	buffyApprovesWillow <- Say(
-	  buffy, 
-	  buffyAccount, 
-	  AllowFollowing().action += willowFollow)
-	_ <- Done(willowFollow, PERFORMED)
-	_ <- Done(buffyApprovesWillow, PERFORMED)
-	willowFollower <- Play3(Follower(), willow, buffyAccount)
-	biographyLet <- Say(
+            .biography += "The Vampire Slayer")
+            .blocked += spike)
+            .isPrivate := true,
+          sunnydale)
+        buffy <- Play2(Tweeter(), buffyAccount)
+        willowFollow <- Say(
+          willow,
+          buffyAccount,
+          Follow())
+        buffyApprovesWillow <- Say(
+          buffy,
+          buffyAccount,
+          AllowFollowing().action += willowFollow)
+        _ <- Done(willowFollow, PERFORMED)
+        _ <- Done(buffyApprovesWillow, PERFORMED)
+        willowFollower <- Play3(Follower(), willow, buffyAccount) flatMap2 {
+          case Events(event @ NewEntity(follower: $[Follower] @unchecked, _), _, _, _) => 
+            Notify(buffy, event) map { _ => follower }
+        }
+        biographyLet <- Say(
           spike,
           spikeAccount,
           DeclareLet(
@@ -197,18 +202,18 @@ class FollowScenarioTest extends FunSpec
           buffy,
           buffyAccount,
           DeclareLet(
-	    _entity = Some(buffyAccount),
-	    _attribute = "blocked",
-	    _value = spike,
-	    _mode = Some(false)))
-	_ <- Let(buffyAccount, "blocked", spike, false)
-	_ <- Done(blockedLet, PERFORMED)
-	spikeFollow <- Say(
-	  spike, 
-	  buffyAccount, 
-	  Follow())
-	_ <- Retract(spikeFollow)
-	_ <- Abandon(willowFollower)
+            _entity = Some(buffyAccount),
+            _attribute = "blocked",
+            _mode = Some(false),
+            _value = "").value := spike)
+        _ <- Let(buffyAccount, "blocked", spike, false)
+        _ <- Done(blockedLet, PERFORMED)
+        spikeFollow <- Say(
+          spike,
+          buffyAccount,
+          Follow())
+        _ <- Retract(spikeFollow)
+        _ <- Abandon(willowFollower)
       } yield ())
 
       obtained should be(getState())

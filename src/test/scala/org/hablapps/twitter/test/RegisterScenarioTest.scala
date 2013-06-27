@@ -45,14 +45,12 @@ class RegisterScenarioTest extends FunSpec
 
       import System._
 
-		turn_on_log = true
-
       val Output(myTwitter, hablappsAccount, hablapps) = reset(for {
-      	myTwitter <- Initiate(Twitter())
-	hablappsAccount <- Initiate2(
-	  (Account().name += "hablapps").biography += "Programming the Information Society", 
-	  myTwitter)
-	hablapps <- Play2(Tweeter(), hablappsAccount)
+        myTwitter <- Initiate(Twitter())
+        hablappsAccount <- Initiate2(
+          (Account().name += "hablapps").biography += "Programming the Information Society",
+          myTwitter)
+        hablapps <- Play2(Tweeter(_name=Some("user")), hablappsAccount)
       } yield (myTwitter, hablappsAccount, hablapps))
 
       // Dolly - I heard about Twitter, let's try it out!
@@ -61,9 +59,14 @@ class RegisterScenarioTest extends FunSpec
 
       // Dolly - I will gossip Habla Computing...
       attempt(See(
-      	guest1, 
-      	myTwitter, 
-      	GenObservation(_query = Get(hablapps))))
+        guest1,
+        myTwitter,
+        GenObservation(_query = Get(hablapps))))
+
+      /* TODO: I would like to check that the description of @hablapps is
+       * right, by getting the event from the mailbox. However, due to session
+       * complexity, this is not working properly currently.
+       */
 
       // Dolly - Twitter rules! I will sign in.
       val NewEntities(_, dollyAccount: $[Account]@unchecked, dolly: $[Tweeter]@unchecked) =
@@ -102,9 +105,13 @@ class RegisterScenarioTest extends FunSpec
        * Dolly Clon - Oh my God, I am a clon!
        */
       attempt(See(
-      	clon, 
-      	dollyAccount, 
-      	GenObservation(_query = Get(dolly))))
+        clon,
+        dollyAccount,
+        GenObservation(_query = Get(dolly))))
+
+      /* TODO: Check clon mailbox and extract some info from @dolly. For further
+       * information, see previous TODO.
+       */
 
       /* Narrator - But Dolly could not handle to be a clon, so she decided to
        * leave the application.
@@ -117,42 +124,42 @@ class RegisterScenarioTest extends FunSpec
       val obtained = getState()
 
       reset(for {
-      	myTwitter <- Initiate(Twitter())
-	hablappsAccount <- Initiate2(
-	  (Account()
-	    .name += "hablapps")
-            .biography += "Programming the Information Society", 
-	  myTwitter)
-	hablapps <- Play2(Tweeter(), hablappsAccount)
-	guest1 <- Play2(Guest(), myTwitter)
-	obser1 <- See(
-	  guest1, 
-	  myTwitter, 
-	  GenObservation(_query = Get(hablapps)))
-	_ <- Done(obser1, PERFORMED)
-	setup1 <- Say(
-	  guest1, 
-	  myTwitter, 
-	  SetUpAccount(
-	    __new = Some(
-	      (Account().name += "dolly").biography += "Clon Model")))
-	_ <- Done(setup1, PERFORMED)
-	_ <- Abandon(guest1)
-	dollyAccount <- Initiate2(
-	  (Account().name += "dolly").biography += "Clon Model", 
-	  myTwitter)
-	dolly <- Play2(Tweeter(), dollyAccount)
-	guest2 <- Play2(Guest(), myTwitter)
-	setup2 <- Say(
-	  guest2, 
-	  myTwitter, 
-	  SetUpAccount(__new = Some(Account().name += "dolly2")))
-	_ <- Done(setup2, PERFORMED)
-	_ <- Abandon(guest2)
-	clonAccount <- Initiate2(Account().name += "dolly2", myTwitter)
-	clon <- Play2(Tweeter(), clonAccount)
-	_ <- Abandon(clon)
-	_ <- Finish(clonAccount)
+        myTwitter <- Initiate(Twitter())
+        hablappsAccount <- Initiate2(
+          (Account()
+            .name += "hablapps")
+            .biography += "Programming the Information Society",
+          myTwitter)
+        hablapps <- Play2(Tweeter(_name=Some("user")), hablappsAccount)
+        guest1 <- Play2(Guest(), myTwitter)
+        obser1 <- See(
+          guest1,
+          myTwitter,
+          GenObservation(_query = Get(hablapps)))
+        _ <- Done(obser1, PERFORMED)
+        setup1 <- Say(
+          guest1,
+          myTwitter,
+          SetUpAccount(
+            __new = Some(
+              (Account().name += "dolly").biography += "Clon Model")))
+        _ <- Done(setup1, PERFORMED)
+        _ <- Abandon(guest1)
+        dollyAccount <- Initiate2(
+          (Account().name += "dolly").biography += "Clon Model",
+          myTwitter)
+        dolly <- Play2(Tweeter(_name=Some("user")), dollyAccount)
+        guest2 <- Play2(Guest(), myTwitter)
+        setup2 <- Say(
+          guest2,
+          myTwitter,
+          SetUpAccount(__new = Some(Account().name += "dolly2")))
+        _ <- Done(setup2, PERFORMED)
+        _ <- Abandon(guest2)
+        clonAccount <- Initiate2(Account().name += "dolly2", myTwitter)
+        clon <- Play2(Tweeter(_name=Some("user")), clonAccount)
+        _ <- Abandon(clon)
+        _ <- Finish(clonAccount)
       } yield ())
 
       obtained should be(getState())

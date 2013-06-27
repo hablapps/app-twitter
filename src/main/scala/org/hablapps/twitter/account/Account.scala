@@ -18,18 +18,13 @@ package org.hablapps.twitter.account
 
 import org.hablapps.{ updatable, react, speech, twitter}
 import updatable._
-import react.Union
 
 import language.reflectiveCalls
 
 object Account {
 
   trait State { self: speech.Program
-      with twitter.Twitter.State 
-      with twitter.Guest.State 
-      with Tweeter.State 
-      with Follower.State 
-      with Tweet.State =>
+    with twitter.State =>
 
     /** The personal space for the Tweeter and his followers. */
     trait Account extends Interaction {
@@ -59,14 +54,14 @@ object Account {
       type ActionCol[x] = Traversable[x]
 
       /** This is a tree leaf interaction. */
-      type Subinteraction = Nothing
+      type Subinteraction = TwitterList
       type SubinteractionCol[x] = Traversable[x]
 
       /** A small description of this account. */
-      val biography: Option[String]
+     val biography: Option[String]
 
       /** The lsit of blocked Tweeters. */
-      val blocked: Set[$[Tweeter]]
+     val blocked: Set[$[Tweeter]]
 
       /** Are this account's tweets protected from public observation. */
       val isPrivate: Boolean
@@ -78,7 +73,7 @@ object Account {
       def twitter = context.head
 
       /** Member-head alias: the tweeter governing this account. */
-      def user: $[Tweeter] = member.alias[Tweeter].head // SCALA BUG!
+      def user = member.alias[Tweeter].head 
 
       /** Member alias: followers of this account. */
       def followers = member.alias[Follower]
@@ -132,6 +127,16 @@ object Account {
 
     /** Declarations can be done by the account's owner. */
     declarer[Tweeter].of[Account](Account._blocked)
+      .empowered {
+        case (tweeter, account, blocked) => implicit state => 
+			 account.user == tweeter
+      }
+      .permitted {
+        case (agent, entity, value) => implicit state => 
+			 Some(true)
+      }
+      
+    declarer[Tweeter].of[Account](Account._biography)
       .empowered {
         case (tweeter, account, blocked) => implicit state => 
 			 account.user == tweeter
