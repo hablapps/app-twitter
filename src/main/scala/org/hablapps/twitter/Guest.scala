@@ -68,7 +68,7 @@ object Guest {
 
     /** @abandon when this agent sets up an account */
     when {
-      case Performed(setUp: SetUpAccount) => implicit state => 
+      case Performed(setUp: SetUpAccount) =>
         Abandon(setUp.performer.get)
     }
   }

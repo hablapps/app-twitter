@@ -128,30 +128,26 @@ object Account {
     /** Declarations can be done by the account's owner. */
     declarer[Tweeter].of[Account](Account._blocked)
       .empowered {
-        case (tweeter, account, blocked) => implicit state => 
-			 account.user == tweeter
+        case (tweeter, account, blocked) => account.user == tweeter
       }
       .permitted {
-        case (agent, entity, value) => implicit state => 
-			 Some(true)
+        case (agent, entity, value) => Some(true)
       }
       
     declarer[Tweeter].of[Account](Account._biography)
       .empowered {
-        case (tweeter, account, blocked) => implicit state => 
-			 account.user == tweeter
+        case (tweeter, account, blocked) => account.user == tweeter
       }
       .permitted {
-        case (agent, entity, value) => implicit state => 
-			 Some(true)
+        case (agent, entity, value) => Some(true)
       }
 
     /** The 'name' and 'isPrivate' attributes are always granted. */
     observer[Tweeter].of[Account]
       .empowered_atts(Account._name, Account._isPrivate)
       .empowered { 
-        case (performer, EntityQuery(account)) => implicit state => 
-			 !account.isPrivate || account.followers.exists(_.tweeter == performer)
+        case (performer, EntityQuery(account)) =>
+			   !account.isPrivate || account.followers.exists(_.tweeter == performer)
       }
 
     /** An account must be finished when the Tweeter decides to leave it. */
