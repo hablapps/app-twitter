@@ -80,7 +80,7 @@ object Follower {
       type Addressee = Nothing
       type New = Follower
 
-		val _new: Option[Updatable[New]] = Some(Follower())
+      val _new: Option[Updatable[New]]// = Some(Follower())
 
       def account = context.head
       def tweeter = performer.head
