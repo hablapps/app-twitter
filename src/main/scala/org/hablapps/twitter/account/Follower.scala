@@ -80,7 +80,7 @@ object Follower {
       type Addressee = Nothing
       type New = Follower
 
-      val _new: Option[Updatable[New]]// = Some(Follower())
+      val _new: Option[Updatable[New]] = Some(Follower())
 
       def account = context.head
       def tweeter = performer.head
@@ -92,7 +92,8 @@ object Follower {
         * account's blocked list.
 		  */
       override def empowered(implicit state: State) = 
-		  !account.blocked.contains(tweeter)
+		    !account.blocked.contains(tweeter) && 
+        account != tweeter.account
 
       /** If the account is not protected, the permission is granted. In any
        * other case, the Tweeter's approval is needed, so permission can

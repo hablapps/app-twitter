@@ -120,7 +120,7 @@ class RegisterScenarioTest(sys: speech.System with twitter.Program)
     val obtained = getState()
 
     reset(for {
-      myTwitter <- Initiate(Twitter().date_updated += default_date)
+      myTwitter <- Initiate(Twitter())
       hablappsAccount <- Initiate2(
         (Account()
           .name += "hablapps")
@@ -138,13 +138,13 @@ class RegisterScenarioTest(sys: speech.System with twitter.Program)
         myTwitter,
         SetUpAccount(
           __new = Some(
-            ((Account().name += "dolly").biography += "Clon Model").date_updated += default_date)))
+            (Account().name += "dolly").biography += "Clon Model")))
       _ <- Done(setup1, PERFORMED)
       _ <- Abandon(guest1)
       dollyAccount <- Initiate2(
-        ((Account().name += "dolly").biography += "Clon Model").date_updated += default_date,
+        (Account().name += "dolly").biography += "Clon Model",
         myTwitter)
-      dolly <- Play2(Tweeter(_name=Some("user")).date_updated += default_date, dollyAccount)
+      dolly <- Play2(Tweeter(_name=Some("user")), dollyAccount)
       guest2 <- Play2(Guest(), myTwitter)
       setup2 <- Say(
         guest2,

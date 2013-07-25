@@ -15,6 +15,7 @@ object TwitterWeb extends App {
     } yield ())
 
     turn_on_log = true
+    serverHttpPort = 8888
   }
 
   System.launch

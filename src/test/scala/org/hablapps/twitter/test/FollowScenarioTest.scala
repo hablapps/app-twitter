@@ -83,7 +83,7 @@ class FollowScenarioTest(sys: speech.System with twitter.Program)
      * she must wait for Buffy to approve (or deny) the action.
      */
     val NewEntities(willowFollow: $[Follow] @unchecked) =
-      attempt(Say(willow, buffyAccount, Follow(__new = Option(Follower()))))
+      attempt(Say(willow, buffyAccount, Follow()))
 
     /* TODO: I suppose that the Willow's desire to follow Buffy should be
      * notified to Buffy herself. Using 'willowFollow' is a kind of cheating.
@@ -101,7 +101,7 @@ class FollowScenarioTest(sys: speech.System with twitter.Program)
     attempt(Say(
       spike, 
       buffyAccount, 
-      Follow(__new = Option(Follower())))).toOption should be(None)
+      Follow())).toOption should be(None)
 
     /* One day, Spike got his soul again, and he decided to update his
      * biography.
@@ -156,23 +156,21 @@ class FollowScenarioTest(sys: speech.System with twitter.Program)
           .name += "willow")
           .biography += "A good (most of time) witch",
         sunnydale)
-      willow <- Play2(Tweeter().date_updated += default_date, willowAccount)
+      willow <- Play2(Tweeter(), willowAccount)
       spikeAccount <- Initiate2(
-        ((Account()
-          .date_updated += default_date)
+        (Account()
           .name += "spike")
           .biography += "Vampire without soul",
         sunnydale)
-      spike <- Play2(Tweeter().date_updated += default_date, spikeAccount)
+      spike <- Play2(Tweeter(), spikeAccount)
       buffyAccount <- Initiate2(
-        ((((Account()
-          .date_updated += default_date)
+        (((Account()
           .name += "buffy")
           .biography += "The Vampire Slayer")
           .blocked += spike)
           .isPrivate := true,
         sunnydale)
-      buffy <- Play2(Tweeter().date_updated += default_date, buffyAccount)
+      buffy <- Play2(Tweeter(), buffyAccount)
       willowFollow <- Say(
         willow,
         buffyAccount,

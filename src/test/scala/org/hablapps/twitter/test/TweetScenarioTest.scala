@@ -110,7 +110,7 @@ class TweetScenarioTest(sys: speech.System with twitter.Program)
     attempt(Say(
       dulcinea, 
       quijoteAccount, 
-      Follow(__new = Option(Follower().date_updated += default_date))))
+      Follow()))
 
     /* And @quijote sends her (a reduced version of) the letter he wrote, as
      * the body of a direct message. Remember: since @dulcinea follows him,
@@ -134,25 +134,23 @@ class TweetScenarioTest(sys: speech.System with twitter.Program)
     reset(for {
       castilla <- Initiate(Twitter())
       dulcineaAccount <- Initiate2(
-        ((Account()
-          .date_updated += default_date)
+        (Account()
           .name += "dulcinea")
           .biography += "Moza del Toboso",
         castilla)
-      dulcinea <- Play2(Tweeter().date_updated += default_date, dulcineaAccount)
+      dulcinea <- Play2(Tweeter(), dulcineaAccount)
       quijoteAccount <- Initiate2(
-        ((Account()
-          .date_updated += default_date)
+        (Account()
           .name += "quijote")
           .biography += "El Caballero de la Triste Figura", 
         castilla)
-      quijote <- Play2(Tweeter().date_updated += default_date, quijoteAccount)
+      quijote <- Play2(Tweeter(), quijoteAccount)
       sanchoAccount <- Initiate2(
         (Account()
           .name += "sancho")
           .biography += "Fiel Escudero y Amigo",
         castilla)
-      sancho <- Play2(Tweeter().date_updated += default_date, sanchoAccount)
+      sancho <- Play2(Tweeter(), sanchoAccount)
       tweet <- Say(
         quijote,
         quijoteAccount,
@@ -173,7 +171,7 @@ class TweetScenarioTest(sys: speech.System with twitter.Program)
       follow <- Say(
         dulcinea,
         quijoteAccount,
-        Follow(__new = Option(Follower().date_updated += default_date)))
+        Follow())
       Performed(act) <- Perform(follow)
       _ <- Notify(quijote, act.execution.head)
       dm <- Say(
