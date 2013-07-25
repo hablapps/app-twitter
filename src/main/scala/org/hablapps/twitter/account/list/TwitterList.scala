@@ -12,27 +12,13 @@ object TwitterList{
 
     trait TwitterList extends Interaction {
       type This = TwitterList
-      
-      type Substatus = Nothing
-
       type Context = Account
       type ContextCol[x] = Option[x]
-
-      type Member = Agent@Union[Listed,ListFollower]
+      type Member = Agent
       type MemberCol[x] = List[x]
-
-      type Environment = Nothing
-      type EnvironmentCol[x] = Traversable[x]
-
       type Action = SocialAction
-      type ActionCol[x] = Traversable[x]
-
-      type Subinteraction = Nothing
-      type SubinteractionCol[x] = Traversable[x]
     }
-				  
+          
     implicit val TwitterList = builder[TwitterList]
-
   }
-
 }

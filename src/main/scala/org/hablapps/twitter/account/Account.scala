@@ -26,94 +26,45 @@ object Account {
   trait State { self: speech.Program
     with twitter.State =>
 
-    /** The personal space for the Tweeter and his followers. */
     trait Account extends Interaction {
       type This = Account
-      
-      /** No substatus is suitable. */
-      type Substatus = Nothing
-
-      /** This has the top twitter interaction as context. */
       type Context = Twitter
       type ContextCol[x] = Option[x]
-
-      /** Here you can find one Tweeter and his followers (if any). */
-      type Member = Agent@Union[Tweeter,Follower]
+      type Member = Agent
       type MemberCol[x] = List[x]
-
-      /** No resource is suitable. */
-      type Environment = Nothing
-      type EnvironmentCol[x] = Traversable[x]
-
-      /** Many kind of social actions can be said here.
-        *
-		  * Please, visit Guest, Tweeter and Follower for further info on this
-		  * field.
-		  */
       type Action = SocialAction
-      type ActionCol[x] = Traversable[x]
-
-      /** This is a tree leaf interaction. */
       type Subinteraction = TwitterList
-      type SubinteractionCol[x] = Traversable[x]
 
-      /** A small description of this account. */
-     val biography: Option[String]
-
-      /** The lsit of blocked Tweeters. */
-     val blocked: Set[$[Tweeter]]
-
-      /** Are this account's tweets protected from public observation. */
+      val biography: Option[String]
+      val blocked: Set[$[Tweeter]]
       val isPrivate: Boolean
 
-      /* Name alias: for instance @hablapps. */
       def username = name.get
-      
-      /** Context-head alias: the app top interaction. */
+
       def twitter = context.head
 
-      /** Member-head alias: the tweeter governing this account. */
-      def user = member.alias[Tweeter].head 
+      def user = alias[Tweeter, Account](member).head
 
-      /** Member alias: followers of this account. */
-      def followers = member.alias[Follower]
+      def followers = alias[Follower, Account](member)
 
-      /** Action alias: tweets said by the Tweeter. */
-      def tweets = action.alias[Tweet]
+      def tweetes = alias[Tweet, Account](action)
     }
 				  
     implicit val Account = builder[Account]
 
-    /** Creates a new account.
-      *
-      * This is the social action that allow guests to create a new account for
-      * them.
-      */
     trait SetUpAccount extends SetUp {
       type This = SetUpAccount
-
-      /** No substatus is suitable. */
-      type Substatus = Nothing
-
-      /** This action must be said in the top twitter interaction. */
       type Context = Twitter
-
-      /** This action can only be said by a guest. */
       type Performer = Guest
-
       type Addressee = Nothing
-
       type New = Account
 
       def account = _new.head
+
       def twitter = context.head
 
-      def NewE: Evidence[Account] = implicitly[Evidence[Account]]
-      def BuilderE: Builder[Account] = Account
-
-      /** If there is not another account with the same name. */
       override def empowered(implicit state: State) = 
-		  !twitter.accounts.exists(_.name == account.name)
+		    !twitter.accounts.exists(_.name == account.name)
     }
 
     implicit val SetUpAccount = builder[SetUpAccount]
@@ -125,7 +76,6 @@ object Account {
       with Account.State
       with Tweeter.State => 
 
-    /** Declarations can be done by the account's owner. */
     declarer[Tweeter].of[Account](Account._blocked)
       .empowered {
         case (tweeter, account, blocked) => account.user == tweeter
@@ -142,7 +92,6 @@ object Account {
         case (agent, entity, value) => Some(true)
       }
 
-    /** The 'name' and 'isPrivate' attributes are always granted. */
     observer[Tweeter].of[Account]
       .empowered_atts(Account._name, Account._isPrivate)
       .empowered { 
@@ -150,7 +99,6 @@ object Account {
 			   !account.isPrivate || account.followers.exists(_.tweeter == performer)
       }
 
-    /** An account must be finished when the Tweeter decides to leave it. */
     when {
       case Deleted(_, tweeter: Tweeter) => {
         Finish(tweeter.account)

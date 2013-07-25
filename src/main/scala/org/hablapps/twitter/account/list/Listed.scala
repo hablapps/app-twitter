@@ -12,17 +12,11 @@ object Listed {
 
     trait Listed extends Agent {
       type This = Listed
-      type Substatus = Nothing
       type Context = TwitterList
       type Player = Tweeter
-      type Role = Nothing
-      type RoleCol[x] = Traversable[x]
       type Perform = SocialAction
-      type PerformCol[x] = Traversable[x]
     }
 
     implicit val Listed = builder[Listed]
-
   }
-
 }
