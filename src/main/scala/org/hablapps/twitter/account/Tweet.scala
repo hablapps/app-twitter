@@ -43,11 +43,13 @@ object Tweet {
 
       def message = dictum
 
-      override def empowered(implicit state: State) =
+      empowered_if{
         message.length != 0
+      }
 
-      override def permitted(implicit state: State) =
-        Some(message.length < 141)
+      permitted_iff{
+        message.length < 141
+      }
     }
 
     implicit val Tweet = builder[Tweet]
@@ -62,8 +64,9 @@ object Tweet {
       override val persistent = true
       val originalTweet: Option[$[Tweet]]
 
-      override def empowered(implicit state: State) =
+      empowered_if{
         !originalTweet.get.account.isPrivate
+      }
     }
 
     implicit val Retweet = builder[Retweet]
@@ -79,7 +82,7 @@ object Tweet {
 
       def tweeter = performer.head
 
-      override def empowered(implicit state: State) = true
+      empowered_if{ true }
     }
 
     implicit val Reply = builder[Reply]
@@ -96,8 +99,9 @@ object Tweet {
 
       def message = dictum
 
-      override def empowered(implicit state: State) =
+      empowered_if{
         performer.get.account.followers.exists { _.tweeter == account.user }
+      } 
     }
 
     implicit val DM = builder[DM]

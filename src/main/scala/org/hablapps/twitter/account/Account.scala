@@ -63,8 +63,9 @@ object Account {
 
       def twitter = context.head
 
-      override def empowered(implicit state: State) = 
+      empowered_if{
 		    !twitter.accounts.exists(_.name == account.name)
+      }
     }
 
     implicit val SetUpAccount = builder[SetUpAccount]

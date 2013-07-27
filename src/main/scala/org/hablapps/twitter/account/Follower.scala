@@ -48,15 +48,16 @@ object Follower {
       val _new: Option[Updatable[New]] = Some(Follower())
 
       def account = context.head
-
       def tweeter = performer.head
 
-      override def empowered(implicit state: State) = 
+      empowered_if{ 
 		    !account.blocked.contains(tweeter) && 
         account != tweeter.account
+      }
 
-      override def permitted(implicit state: State) = 
-        if (!account.isPrivate) Some(true) else None
+      permitted_if{
+        !account.isPrivate
+      }
     }
 
     implicit val Follow = builder[Follow]
@@ -76,11 +77,11 @@ object Follower {
       type Action = Follow
 
       def follow = action.head
-
       def user = performer.head
 
-      override def empowered(implicit state: State) = 
+      empowered_if{
         follow.account.user == user
+      }
     }
          
     implicit val AllowFollowing = builder[AllowFollowing]
@@ -92,11 +93,11 @@ object Follower {
       type Action = Follow
 
       def follow = action.head
-
       def user = performer.head
       
-      override def empowered(implicit state: State) = 
+      empowered_if{
         follow.account.user == user
+      }
     }
          
     implicit val ForbidFollowing = builder[ForbidFollowing]        
