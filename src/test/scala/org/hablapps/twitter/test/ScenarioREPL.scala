@@ -8,9 +8,6 @@ import org.hablapps.twitter
 object ScenarioREPL extends speech.PlainSystem
   with twitter.Program 
   with react.Debug { 
-	 
-  turn_on_log = true
-  show_causes = true
 
   val NewEntities(habla: $[Twitter]@unchecked) = 
 	 attempt(Initiate(Twitter()))
