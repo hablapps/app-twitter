@@ -14,7 +14,6 @@ object TwitterWeb extends App {
       jserrano <- Play(Tweeter(_name = Some("user")), accountJserrano)
     } yield ())
 
-    turn_on_log = true
     serverHttpPort = 8888
   }
 
