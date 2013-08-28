@@ -6,8 +6,6 @@ organization := "org.hablapps"
 
 scalaVersion := "2.10.2"
 
-scalaBinaryVersion <<= scalaVersion { (sv: String) => sv }
-
 scalacOptions ++= Seq("-feature")
 
 resolvers in ThisBuild ++= Seq(
