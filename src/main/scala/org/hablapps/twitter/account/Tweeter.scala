@@ -18,6 +18,7 @@ package org.hablapps.twitter.account
 
 import org.hablapps.{updatable,react,speech,twitter}
 import updatable._
+import react.UnauthorizedError
 
 import language.reflectiveCalls
 
@@ -54,7 +55,7 @@ object Tweeter {
 
     authorised {
       case Play2(agent, _) if agent.isA[Tweeter] => 
-        false
+        Some(UnauthorizedError("Tweeter already registered!"))
     }
 
     when {
