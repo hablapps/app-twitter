@@ -11,6 +11,7 @@ scalacOptions ++= Seq("-feature")
 resolvers in ThisBuild ++= Seq(
   "Speech repo - snapshots" at "http://repo.speechlang.org/snapshots",
   "Speech repo - releases" at "http://repo.speechlang.org/releases",
+  "Typesafe Releases" at " http://repo.typesafe.com/typesafe/maven-releases/",
   "Restlet repository" at "http://maven.restlet.org",
   "Another maven repo" at "http://mavenhub.com/")
 
