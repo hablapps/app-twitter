@@ -15,6 +15,6 @@ resolvers in ThisBuild ++= Seq(
   "Another maven repo" at "http://mavenhub.com/")
 
 libraryDependencies ++= Seq(
-  "org.hablapps" %% "speech-web" % "0.7.1-20130906000654-9014M",
+  "org.hablapps" %% "speech-web" % "0.7.1-20130920104139-9221-9222",
   "org.scalatest" % "scalatest_2.10" % "1.9.1" % "test",
   "junit" % "junit" % "4.10" % "test")
