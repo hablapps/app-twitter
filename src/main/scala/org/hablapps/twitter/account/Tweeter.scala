@@ -41,21 +41,21 @@ object Tweeter {
 
     implicit val Tweeter = builder[Tweeter]
 
-    trait LeaveTweeter extends Leave {
-      type This = LeaveTweeter
-      type Context = Account
-      type Performer = Tweeter
-      type Addressee = Follower
-    }
+    // trait LeaveTweeter extends Leave {
+    //   type This = LeaveTweeter
+    //   type Context = Account
+    //   type Performer = Tweeter
+    //   type Addressee = Follower
+    // }
 
-    implicit val LeaveTweeter = builder[LeaveTweeter]
+    // implicit val LeaveTweeter = builder[LeaveTweeter]
   }
 
   trait Rules { self: speech.Program with State with Account.State with Follower.State =>
 
     authorised {
       case Play2(agent, _) if agent.isA[Tweeter] => 
-        Some(UnauthorizedError("Tweeter already registered!"))
+        ifNot(false, Option(UnauthorizedError("Tweeter already registered!")))
     }
 
     when {

@@ -145,7 +145,7 @@ class FollowScenarioTest(sys: speech.System with twitter.Program)
     /* Meanwhile, Willow has become a black witch and she hates Buffy. So, the
      * very least she can do is to unfollow her.
      */
-    attempt(Say(willow.following.head, buffyAccount, Unfollow()))
+    attempt(Say(willow, buffyAccount, Unfollow(_old = Some(willow.following.head))))
 
     val obtained = getState()
 

@@ -112,10 +112,7 @@ class RegisterScenarioTest(sys: speech.System with twitter.Program)
     /* Narrator - But Dolly could not handle to be a clon, so she decided to
      * leave the application.
      */
-    attempt(Say(
-      clon,
-      clonAccount,
-      LeaveTweeter()))
+    attempt(Abandon(clon))
 
     val obtained = getState()
 

@@ -65,7 +65,8 @@ object Follower {
     trait Unfollow extends Leave {
       type This = Unfollow
       type Context = Account
-      type Performer = Follower
+      type Performer = Tweeter
+      type Old = Follower
     }
 
     implicit val Unfollow = builder[Unfollow]
