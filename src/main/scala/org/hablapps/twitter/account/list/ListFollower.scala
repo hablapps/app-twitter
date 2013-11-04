@@ -12,17 +12,11 @@ object ListFollower{
 
     trait ListFollower extends Agent {
       type This = Follower
-      type Substatus = Nothing
       type Context = TwitterList
       type Player = Tweeter
-      type Role = Nothing
-      type RoleCol[x] = Traversable[x]
       type Perform = SocialAction
-      type PerformCol[x] = Traversable[x]
     }
 
     implicit val ListFollower = builder[ListFollower]
-
   }
-
 }

@@ -20,4 +20,3 @@ libraryDependencies in ThisBuild ++= Seq(
 )
 
 exportJars := true
-

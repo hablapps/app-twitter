@@ -25,21 +25,10 @@ and clone the app-twitter repository.
 > git clone http://github.com/hablapps/app-twitter <twitter>
 ```
 
-#### Install scala 
-
-Speech is implemented as an embedded DSL in Scala, so you must
-download it first. Follow the instructions at <http://scala-lang.org>.
-
 #### Install sbt 
 
 The app-twitter project is configured with the sbt build tool. To
 install sbt follow the instructions at <https://github.com/sbt/sbt>.
-
-#### Install speech 
-
-Download the Speech interpreter from the following address:
-<http://speechlang.org>. Then, simply create a `<twitter>/lib`
-directory, and install there the `speech.jar` archive.
 
 #### Compile twitter 
 
@@ -54,7 +43,7 @@ $ sbt
 From sbt, you can run some tests with the `test-only` command:
 
 ```shell
-> test-only org.hablapps.twitter.test.FollowScenarioTest
+> test-only org.hablapps.twitter.test.All_Twitter
 ...
 ```
 
@@ -63,7 +52,8 @@ own scenario:
 
 ```shell
 $ cd <twitter>
-$ scala -cp lib/speech.jar:target/scala-2.10/app-twitter_2.10-1.0.jar 
+$ sbt
+> console
 scala> import org.hablapps.{speech,twitter}
 ...
 scala> val MyTwitter = new speech.PlainSystem with twitter.Program
