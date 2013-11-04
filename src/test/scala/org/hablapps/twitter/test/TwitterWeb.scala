@@ -13,8 +13,6 @@ object TwitterWeb extends App {
       accountJserrano <- Initiate(Account(_name = Some("jserrano")), habla)
       jserrano <- Play(Tweeter(_name = Some("user")), accountJserrano)
     } yield ())
-
-    turn_on_log = true
   }
 
   System.launch

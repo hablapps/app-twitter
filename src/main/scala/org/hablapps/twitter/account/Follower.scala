@@ -123,9 +123,11 @@ object Follower {
       type Substatus = Nothing
 
       /** This is said by the Follower who aims to abandon. */
-      type Performer = Follower
+      type Performer = Tweeter
 
       type Addressee = Nothing
+
+      type Old = Follower
     }
 
     implicit val Unfollow = builder[Unfollow]

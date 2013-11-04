@@ -86,6 +86,8 @@ object Tweeter {
 
       /** Followers should be notified about this departure. */
       type Addressee = Follower
+
+      type Old = Tweeter
     }
 
     implicit val LeaveTweeter = builder[LeaveTweeter]
